@@ -1,7 +1,9 @@
 #version 400
+#define PI2d16 0.616850275068084913677155
 
 uniform float time;
-uniform vec2 points[30];
+uniform float radius;
+uniform vec2 points[100];
 
 in vec2 uv;
 
@@ -12,13 +14,22 @@ float rnd(int i){
 }
 float map(vec2 p){
     float color = 0.0;
-    for(int i=0;i<10;i++){
-    color+=1.0/(10.0*distance(points[i],p)+0.2);
+    for(int i=0;i<50;i++){
+	vec2 v = (p - points[i])*10.0;
+	if(length(v)<3.0){
+  	    float c = 0.0;
+	    if(length(v)<1.0)
+                c = pow(1.0-PI2d16*(v.x*v.x+v.y*v.y),0.5);//1.0/(1.0+d*100.0);
+	    if(c>color)color=c;
+	}
     }
-    return color*0.1;
+    return color;
+//    color = clamp(0.0,1.0,color);
+    return smoothstep(0.0,1.2,color);
+    return 1.0-pow(1.0-color,2.0)*0.1;
 }
 vec3 norm(vec2 p){
-    float r=0.01;
+    float r=0.001;
     float c=map(p);
     float x=map(p+vec2(r,0.0));
     float y=map(p+vec2(0.0,r));
@@ -46,7 +57,10 @@ vec3 tex(vec2 p){
 
 void main(void)
 {
-    vec3 color=vec3(light(norm(uv)));
+    vec3 color;
+    color=vec3(light(norm(uv)));
+//    color=vec3(map(uv));
+//    color=vec3(norm(uv));
     //color=tex(uv);
     fragColor = vec4( color, 1.0 );
 }
