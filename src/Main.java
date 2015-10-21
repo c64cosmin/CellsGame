@@ -1,6 +1,11 @@
+import java.io.File;
+import java.io.IOException;
 import java.util.Random;
 
 import com.jogamp.opengl.GL4;
+import com.jogamp.opengl.GLException;
+import com.jogamp.opengl.util.texture.Texture;
+import com.jogamp.opengl.util.texture.TextureIO;
 
 import glm.Mat4;
 import glm.Vec2;
@@ -16,11 +21,11 @@ import ogl.Shape;
 public class Main extends App{
 	private Shader testShader;
 	private Shape screenQuad;
-	private Shape cellQuad;
-	private float time=0;
-	private Vec2[] points; 
+	private float time=0; 
 	private int n = 100;
 	private float radius = 0.1f	;
+	private Texture cellTexture;
+	private Cell[] cells;
 	public static void main(String[] args){
 		new OpenGL("Cell game",(App)new Main());
 	}
@@ -28,14 +33,15 @@ public class Main extends App{
 	public int startup(GL4 gl) {
 		try {
 			this.testShader = new Shader(gl, "test", new int[]{2}, new String[]{"xy"});
-		} catch (BadShaderException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		} catch (BadShaderException e) {e.printStackTrace();}
+		try {
+			this.cellTexture = TextureIO.newTexture(new File("cellTexture.png"), false);
+		} catch (GLException e) {e.printStackTrace();} catch (IOException e) {e.printStackTrace();}
+		
 		float ratio = (float)OpenGL.screenX/OpenGL.screenY;
-		this.testShader.setUniformVec4(gl, "resolution", new Vec4(OpenGL.screenX, OpenGL.screenY, 0.0f, 0.0f));
-		this.testShader.setUniformFloat(gl, "radius", radius);
-		this.cellQuad = new Shape(gl);
+		this.testShader.setUniformVec4(gl, "resolution", new Vec4(OpenGL.screenX, OpenGL.screenY, 0.0f, 0.0f));		
+		this.testShader.setUniformTexture(gl, "tex0", 0, cellTexture);
+		Cell.quads = new Shape(gl);
 		this.screenQuad = new Shape(gl);
 		this.screenQuad.begin();
 		this.screenQuad.add(new Vec2(-1.0f * ratio, -1.0f));
@@ -43,9 +49,9 @@ public class Main extends App{
 		this.screenQuad.add(new Vec2(-1.0f * ratio,  1.0f));
 		this.screenQuad.add(new Vec2( 1.0f * ratio,  1.0f));
 		Random random = new Random();
-		points = new Vec2[n];
+		cells = new Cell[n];
 		for(int i=0;i<n;i++)
-			points[i] = new Vec2((random.nextFloat() * 2.0f - 1.0f)* ratio ,random.nextFloat() * 2.0f - 1.0f);
+			cells[i] = new Cell(new Vec2((random.nextFloat() * 2.0f - 1.0f)* ratio ,random.nextFloat() * 2.0f - 1.0f), radius);
 		Mouse.mouse.set(Mat4.identity(), Mat4.identity());
 		return 0;
 	}
@@ -54,30 +60,21 @@ public class Main extends App{
 	}
 
 	public void draw(GL4 gl) {
-		points[0]= Mouse.mouse.getPosition();
-		this.cellQuad.begin();
+		Cell.quads.begin();
 		for(int i=0;i<n;i++){
-			addCell(this.cellQuad, points[i],radius);
-			this.testShader.setUniformVec2(gl, "points[" + i + "]", points[i]);
+			cells[i].draw();
+			this.testShader.setUniformVec2(gl, "points[" + i + "]", cells[i].position);
 		}
-		this.testShader.setUniformFloat(gl, "time", time);
-		gl.glClearColor(0.5f, 0.0f, 0.0f, 0.0f);
-		gl.glClear(gl.GL_COLOR_BUFFER_BIT);
-		this.cellQuad.draw(gl, testShader, DrawMode.triangles);
-	}
-	
-	private void addCell(Shape q, Vec2 p, float s) {
-		s+=0.01;
-		q.add(p.add(new Vec2(-s,-s)));
-		q.add(p.add(new Vec2( s,-s)));
-		q.add(p.add(new Vec2(-s, s)));
 		
-		q.add(p.add(new Vec2(-s, s)));
-		q.add(p.add(new Vec2( s,-s)));
-		q.add(p.add(new Vec2( s, s)));
+		this.testShader.setUniformFloat(gl, "time", time);
+		gl.glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+		gl.glClear(gl.GL_COLOR_BUFFER_BIT);
+		Cell.quads.draw(gl, testShader, DrawMode.triangles);
 	}
 
 	public int update(GL4 gl) {
+		for(int i=0;i<n;i++)
+			cells[i].update();
 		time+=0.01;
 		return 0;
 	}
