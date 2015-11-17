@@ -26,6 +26,8 @@ public class Main extends App{
 	private float radius = 0.1f	;
 	private Texture cellTexture;
 	private Cell[] cells;
+	private Shape renderDuty;
+	private CellRecord record;
 	public static void main(String[] args){
 		new OpenGL("Cell game",(App)new Main());
 	}
@@ -41,7 +43,7 @@ public class Main extends App{
 		float ratio = (float)OpenGL.screenX/OpenGL.screenY;
 		this.testShader.setUniformVec4(gl, "resolution", new Vec4(OpenGL.screenX, OpenGL.screenY, 0.0f, 0.0f));		
 		this.testShader.setUniformTexture(gl, "tex0", 0, cellTexture);
-		Cell.quads = new Shape(gl);
+		renderDuty = new Shape(gl);
 		this.screenQuad = new Shape(gl);
 		this.screenQuad.begin();
 		this.screenQuad.add(new Vec2(-1.0f * ratio, -1.0f));
@@ -60,7 +62,7 @@ public class Main extends App{
 	}
 
 	public void draw(GL4 gl) {
-		Cell.quads.begin();
+		renderDuty.begin();
 		for(int i=0;i<n;i++){
 			cells[i].draw();
 			this.testShader.setUniformVec2(gl, "points[" + i + "]", cells[i].position);
@@ -69,7 +71,7 @@ public class Main extends App{
 		this.testShader.setUniformFloat(gl, "time", time);
 		gl.glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
 		gl.glClear(gl.GL_COLOR_BUFFER_BIT);
-		Cell.quads.draw(gl, testShader, DrawMode.triangles);
+		renderDuty.draw(gl, testShader, DrawMode.triangles);
 	}
 
 	public int update(GL4 gl) {
