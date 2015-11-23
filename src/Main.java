@@ -64,7 +64,7 @@ public class Main extends App{
 	public void draw(GL4 gl) {
 		renderDuty.begin();
 		for(int i=0;i<n;i++){
-			cells[i].draw();
+			record.draw(renderDuty);
 			this.testShader.setUniformVec2(gl, "points[" + i + "]", cells[i].position);
 		}
 		

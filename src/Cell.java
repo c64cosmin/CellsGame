@@ -38,4 +38,15 @@ public class Cell implements Runnable{
 	public void run() {
 		
 	}
+	
+	public void draw(Shape shape){
+		float s = radius + 0.01f;
+		shape.add(position.add(new Vec2(-s,-s)));
+		shape.add(position.add(new Vec2( s,-s)));
+		shape.add(position.add(new Vec2(-s, s)));
+		
+		shape.add(position.add(new Vec2(-s, s)));
+		shape.add(position.add(new Vec2( s,-s)));
+		shape.add(position.add(new Vec2( s, s)));
+	}
 }

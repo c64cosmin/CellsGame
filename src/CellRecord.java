@@ -1,3 +1,4 @@
+import ogl.Shape;
 
 public class CellRecord {
 	public static int CELLMAX = 40;
@@ -39,5 +40,13 @@ public class CellRecord {
 			return cellsRecord[i];
 		}
 		return null;
+	}
+	
+	public void draw(Shape shape){
+		for(int i=0;i<CELLMAX; i++){
+			if(emptyRecord[i] == true){
+				cellsRecord[i].draw(shape);
+			}
+		}
 	}
 }
