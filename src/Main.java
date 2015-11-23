@@ -44,6 +44,7 @@ public class Main extends App{
 		this.testShader.setUniformVec4(gl, "resolution", new Vec4(OpenGL.screenX, OpenGL.screenY, 0.0f, 0.0f));		
 		this.testShader.setUniformTexture(gl, "tex0", 0, cellTexture);
 		renderDuty = new Shape(gl);
+		record = new CellRecord(100);
 		this.screenQuad = new Shape(gl);
 		this.screenQuad.begin();
 		this.screenQuad.add(new Vec2(-1.0f * ratio, -1.0f));
