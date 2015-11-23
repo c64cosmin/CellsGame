@@ -27,7 +27,6 @@ public class Main extends App{
 	private Texture cellTexture;
 	private Base[] cells;
 	private Shape renderDuty;
-	private CellRecord record;
 	public static void main(String[] args){
 		new OpenGL("Cell game",(App)new Main());
 	}
@@ -44,7 +43,6 @@ public class Main extends App{
 		this.testShader.setUniformVec4(gl, "resolution", new Vec4(OpenGL.screenX, OpenGL.screenY, 0.0f, 0.0f));		
 		this.testShader.setUniformTexture(gl, "tex0", 0, cellTexture);
 		renderDuty = new Shape(gl);
-		record = new CellRecord(100);
 		this.screenQuad = new Shape(gl);
 		this.screenQuad.begin();
 		this.screenQuad.add(new Vec2(-1.0f * ratio, -1.0f));
@@ -65,7 +63,8 @@ public class Main extends App{
 	public void draw(GL4 gl) {
 		renderDuty.begin();
 		for(int i=0;i<n;i++){
-			record.draw(renderDuty);
+			cells[i].update();
+			cells[i].draw(renderDuty);
 			this.testShader.setUniformVec2(gl, "points[" + i + "]", cells[i].position);
 		}
 		
@@ -76,9 +75,7 @@ public class Main extends App{
 	}
 
 	public int update(GL4 gl) {
-		for(int i=0;i<n;i++)
-			cells[i].update();
-		time+=0.01;
+		
 		return 0;
 	}
 }
