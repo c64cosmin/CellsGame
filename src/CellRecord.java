@@ -1,7 +1,7 @@
 import ogl.Shape;
 
 public class CellRecord {
-	public int max = 40;
+	public int max;
 	private Base[] cellsRecord;
 	private Boolean[] emptyRecord;
 	public CellRecord(int max){
