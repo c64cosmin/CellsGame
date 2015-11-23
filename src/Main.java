@@ -25,7 +25,7 @@ public class Main extends App{
 	private int n = 100;
 	private float radius = 0.1f	;
 	private Texture cellTexture;
-	private Cell[] cells;
+	private Base[] cells;
 	private Shape renderDuty;
 	private CellRecord record;
 	public static void main(String[] args){
@@ -52,9 +52,9 @@ public class Main extends App{
 		this.screenQuad.add(new Vec2(-1.0f * ratio,  1.0f));
 		this.screenQuad.add(new Vec2( 1.0f * ratio,  1.0f));
 		Random random = new Random();
-		cells = new Cell[n];
+		cells = new Base[n];
 		for(int i=0;i<n;i++)
-			cells[i] = new Cell(new Vec2((random.nextFloat() * 2.0f - 1.0f)* ratio ,random.nextFloat() * 2.0f - 1.0f), radius);
+			cells[i] = new Base(new Vec2((random.nextFloat() * 2.0f - 1.0f)* ratio ,random.nextFloat() * 2.0f - 1.0f), radius);
 		Mouse.mouse.set(Mat4.identity(), Mat4.identity());
 		return 0;
 	}

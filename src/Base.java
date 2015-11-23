@@ -3,23 +3,23 @@ import java.util.Random;
 import glm.Vec2;
 import ogl.Shape;
 
-public class Cell implements Runnable{
+public class Base implements Runnable{
 	public Vec2 position;
 	private float radius;
 	private float angle;
-	public Cell(Vec2 p, float r){
+	public Base(Vec2 p, float r){
 		angle = (float)(new Random().nextFloat()*Math.PI);
 		position = p;
 		radius = r;
 	}
 	
-	private Cell(Vec2 p, float r, float a){
+	private Base(Vec2 p, float r, float a){
 		position = p;
 		radius = r;
 		angle = a;
 	}
 	
-	public Cell(Cell cell) {
+	public Base(Base cell) {
 		this(cell.position, cell.radius, cell.angle);
 	}
 
