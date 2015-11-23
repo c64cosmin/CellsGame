@@ -61,7 +61,7 @@ float light(vec3 norm){
     return lum*0.5+0.5;
 }
 vec4 tex(vec2 p){
-    vec4 result;
+    vec4 result = vec4(0.0,0.0,0.0,1.0);
     float color = 0.0;
     for(int i=0;i<100;i++){
         float dist = distance(p, points[i]);
