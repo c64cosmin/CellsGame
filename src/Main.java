@@ -22,7 +22,7 @@ public class Main extends App{
 	private Shape screenQuad;
 	private float time=0; 
 	private int n = 100;
-	private int maxN = 100;
+	public static int maxN = 100;
 	private Texture cellTexture;
 	private Shape renderDuty;
 	private Pool pool;

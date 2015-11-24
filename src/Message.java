@@ -4,7 +4,8 @@ public class Message {
 		EMPTY,
 		EAT,
 		MATE,
-		SPLIT
+		SPLIT,
+		DIE
 	};
 	
 	public type messageType;
@@ -27,8 +28,12 @@ public class Message {
 		return new Message(type.MATE, cell);
 	}
 	
-	public static Message Split(Base cell){
-		return new Message(type.SPLIT, cell);
+	public static Message Split(){
+		return new Message(type.SPLIT, null);
+	}
+
+	public static Message Die() {
+		return new Message(type.DIE, null);
 	}
 	
 	public Message clone(){
