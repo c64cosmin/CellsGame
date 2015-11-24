@@ -1,5 +1,6 @@
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Random;
 
 import com.jogamp.opengl.GL4;
@@ -23,10 +24,9 @@ public class Main extends App{
 	private Shape screenQuad;
 	private float time=0; 
 	private int n = 100;
-	private float radius = 0.1f	;
 	private Texture cellTexture;
-	private Base[] cells;
 	private Shape renderDuty;
+	private Pool pool;
 	public static void main(String[] args){
 		new OpenGL("Cell game",(App)new Main());
 	}
@@ -49,10 +49,7 @@ public class Main extends App{
 		this.screenQuad.add(new Vec2( 1.0f * ratio, -1.0f));
 		this.screenQuad.add(new Vec2(-1.0f * ratio,  1.0f));
 		this.screenQuad.add(new Vec2( 1.0f * ratio,  1.0f));
-		Random random = new Random();
-		cells = new Base[n];
-		for(int i=0;i<n;i++)
-			cells[i] = new Base(new Vec2((random.nextFloat() * 2.0f - 1.0f)* ratio ,random.nextFloat() * 2.0f - 1.0f), radius);
+		pool = new Pool(n);
 		Mouse.mouse.set(Mat4.identity(), Mat4.identity());
 		return 0;
 	}
@@ -62,10 +59,10 @@ public class Main extends App{
 
 	public void draw(GL4 gl) {
 		renderDuty.begin();
-		for(int i=0;i<n;i++){
-			cells[i].update();
-			cells[i].draw(renderDuty);
-			this.testShader.setUniformVec2(gl, "points[" + i + "]", cells[i].position);
+		ArrayList<Base> cells = pool.getCells();
+		for(int i=0;i<cells.size();i++){
+			cells.get(i).draw(renderDuty);
+			this.testShader.setUniformVec2(gl, "points[" + i + "]", cells.get(i).position);
 		}
 		
 		this.testShader.setUniformFloat(gl, "time", time);
