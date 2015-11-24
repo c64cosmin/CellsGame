@@ -19,16 +19,19 @@ public class Pool implements Runnable{
 	}
 	
 	public void run() {
-		int refreshClonesCounter = 0;
-		while(cellClones.size()!=0){
-			refreshClonesCounter++;
-			if(refreshClonesCounter == 10000){
-				refreshClonesCounter = 0;
+		int counter = 0;
+		while(cells.size()!=0){
+			try {
+				Thread.sleep(1000/60);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			synchronized(this){
+				counter = 0;
 				cellClones.clear();
 				for(int i=0;i<cells.size();i++){
-					synchronized(cells.get(i)){
-						cellClones.add(cells.get(i).myClone);
-					}
+					cellClones.add(cells.get(i).getClone());
 				}
 				
 				for(int i=0;i<cellClones.size();i++){
@@ -54,10 +57,8 @@ public class Pool implements Runnable{
 	public ArrayList<Base> getCells(){
 		ArrayList<Base> c = new ArrayList<Base>();
 		synchronized(this){
-			for(int i=0;i<cells.size();i++){
-				synchronized(cells.get(i)){
-					c.add(cells.get(i).myClone);
-				}
+			for(int i=0;i<cellClones.size();i++){
+				c.add(cellClones.get(i));
 			}
 		}
 		return c;

@@ -11,7 +11,10 @@ public class Base implements Runnable{
 	public float angle;
 	public boolean alive;
 	public float health;
-	public Vec4 color;
+	public double r;
+	public double g;
+	public double b;
+	public double a;
 	private boolean hasInputMessages;
 	private ArrayList<Message> outsideMessages;
 	private ArrayList<Message> inputMessages;
@@ -22,33 +25,39 @@ public class Base implements Runnable{
 		
 	}
 	
-	private Base(Vec2 p, float r, float a, float health, Vec4 color){
-		position = p;
-		radius = r;
-		angle = a;
+	private Base(Vec2 p, float radius, float angle, float health, double r, double g, double b, double a){
+		position = new Vec2(p.v[0], p.v[1]);
+		this.radius = radius;
+		this.angle = angle;
 		this.health = health;
 		this.health = (new Random()).nextFloat()*100.0f;
 		alive = true;
-		this.color = color;
+		this.r = r;
+		this.g = g;
+		this.b = b;
+		this.a = a;
 		outsideMessages = new ArrayList<Message>();
 		inputMessages = new ArrayList<Message>();
 		outputMessages = new ArrayList<Message>();
 		myClone = new Base();
-		myClone.position = this.position;
+		myClone.position = new Vec2(p.v[0], p.v[1]);
 		myClone.radius = this.radius;
 		myClone.angle = this.angle;
 		myClone.health = this.health;
 		myClone.alive = this.alive;
-		myClone.color = this.color;
+		myClone.r = r;
+		myClone.g = g;
+		myClone.b = b;
+		myClone.a = a;
 	}
 	
 	public Base(Vec2 p, float r, float health){
-		this(p, r, (float)(new Random().nextFloat()*Math.PI*2.0), health, new Vec4(new Random().nextFloat(),new Random().nextFloat(),new Random().nextFloat(),1.0));
+		this(p, r, (float)(new Random().nextFloat()*Math.PI*2.0), health, new Random().nextFloat(),new Random().nextFloat(),new Random().nextFloat(),1.0);
 	}	
 	
 	public Base clone(){
 		Base r;
-		r = new Base(position, radius, angle, health, new Vec4(color.v[0],color.v[1],color.v[2],color.v[3]));
+		r = new Base(position, radius, angle, health, this.r, this.g, this.b, this.a);
 		r.alive = alive;
 		return r;
 	}
@@ -64,28 +73,31 @@ public class Base implements Runnable{
 	
 	public void run() {
 		ArrayList<Message> inputMessagesList;
-		int worldSyncCounter = 0;
-		int updateCounter = 0;
+		int counter = 0;
 		while(alive){
-			worldSyncCounter++;
-			if(worldSyncCounter == 5000){
+			try {
+				Thread.sleep(5);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			counter++;
+			if(counter%3 == 0){
+				counter=0;
+				synchronized(this){
+					myClone = this.clone();
+				}
 				if(hasInputMessages){
 					synchronized(this){
 						outsideMessages.clear();
 						for(int i=0;i<inputMessages.size();i++){
 							outsideMessages.add(inputMessages.get(i).clone());
 						}
-						myClone = this.clone();
 					}
 					hasInputMessages = false;
 				}
-				worldSyncCounter=0;
 			}
-			updateCounter++;
-			if(updateCounter == 300000){
-				updateCounter = 0;
-				update();
-			}
+			update();
 		}
 	}
 	
@@ -108,5 +120,9 @@ public class Base implements Runnable{
 			}
 			hasInputMessages = true;
 		}
+	}
+
+	public synchronized Base getClone() {
+		return myClone;
 	}
 }

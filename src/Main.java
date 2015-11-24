@@ -1,8 +1,6 @@
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Random;
-
 import com.jogamp.opengl.GL4;
 import com.jogamp.opengl.GLException;
 import com.jogamp.opengl.util.texture.Texture;
@@ -69,8 +67,7 @@ public class Main extends App{
 			if(i<cells.size()){
 				this.testShader.setUniformVec2(gl, "points[" + i + "]", cells.get(i).position);
 				this.testShader.setUniformFloat(gl, "radius[" + i + "]", cells.get(i).radius);
-				System.out.println(cells.size());
-				this.testShader.setUniformVec4(gl, "colors[" + i + "]",  cells.get(i).color);
+				this.testShader.setUniformVec4(gl, "colors[" + i + "]", new Vec4(cells.get(i).r, cells.get(i).g, cells.get(i).b, cells.get(i).a));
 			}
 			else{
 				this.testShader.setUniformVec2(gl, "points[" + i + "]", new Vec2(-10,-10));
