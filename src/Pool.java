@@ -11,7 +11,7 @@ public class Pool implements Runnable{
 		cellClones = new ArrayList<Base>();
 		Random random = new Random();
 		for(int i=0;i<amount;i++){
-			cells.add(new Base(new Vec2((random.nextFloat() * 2.0f - 1.0f) ,random.nextFloat() * 2.0f - 1.0f), 0.1f, 50));
+			cells.add(new Base(new Vec2((random.nextFloat() * 2.0f - 1.0f) ,random.nextFloat() * 2.0f - 1.0f), 0.1f, 100));
 		}
 		for(int i=0;i<cells.size();i++){
 			(new Thread(cells.get(i))).start();
@@ -22,7 +22,7 @@ public class Pool implements Runnable{
 		int refreshClonesCounter = 0;
 		while(cellClones.size()!=0){
 			refreshClonesCounter++;
-			if(refreshClonesCounter == 300){
+			if(refreshClonesCounter == 10000){
 				refreshClonesCounter = 0;
 				cellClones.clear();
 				for(int i=0;i<cells.size();i++){
@@ -31,7 +31,14 @@ public class Pool implements Runnable{
 					}
 				}
 				
-				
+				for(int i=0;i<cellClones.size();i++){
+					ArrayList<Message> messages = new ArrayList<Message>();
+					for(int j=0;j<cellClones.size();j++){
+						if(i!=j){
+							
+						}
+					}
+				}
 				
 				for(int i=0;i<cellClones.size();i++){
 					if(!cellClones.get(i).alive){

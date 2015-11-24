@@ -5,6 +5,7 @@
 uniform sampler2D tex0;
 uniform float time;
 uniform vec2 points[100];
+uniform float radius[100];
 
 in vec2 uv;
 
@@ -25,7 +26,7 @@ float dist(vec2 p){
 float map(vec2 p){
 return dist(p);
     float color = 0.0;
-    for(int i=0;i<50;i++){
+    for(int i=0;i<100;i++){
 	vec2 v = (p - points[i])*10.0;
 	if(length(v)<3.0){
   	    float c = 0.0;
@@ -65,17 +66,17 @@ vec4 tex(vec2 p){
     float color = 0.0;
     for(int i=0;i<100;i++){
         float dist = distance(p, points[i]);
-	if(dist*10.0<1.0){
-            vec2 u = (p - points[i])*10.0;
-            vec2 d = vec2(cos(p.x*200.0-time*10.0)+sin(p.y*200.0+time*10.0),
-	                  cos(p.x*210.0+time*12.0)+sin(p.y*190.0-time*11.0))*0.01;
-	    float v = 1.0/(1.0+dist);
-            float c = 1.0-((1.0-v)*10.0);
-	    if(c>color){
-	        color=c;
-	        result = texture2D(tex0,u*0.5+0.5+d);
-            }
-	}
+		if(dist<radius[i]){
+	            vec2 u = (p - points[i])/radius[i];
+	            vec2 d = vec2(cos(p.x*200.0-time*10.0)+sin(p.y*200.0+time*10.0),
+		                  cos(p.x*210.0+time*12.0)+sin(p.y*190.0-time*11.0))*0.01;
+		    float v = 1.0/(1.0+dist);
+	            float c = 1.0-((1.0-v)*10.0);
+		    if(c>color){
+		        color=c;
+		        result = texture2D(tex0,u*0.5+0.5+d);
+	            }
+		}
     }
     return result;
 }

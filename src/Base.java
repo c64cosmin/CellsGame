@@ -25,6 +25,7 @@ public class Base implements Runnable{
 		radius = r;
 		angle = a;
 		this.health = health;
+		this.health = (new Random()).nextFloat()*100.0f;
 		alive = true;
 		outsideMessages = new ArrayList<Message>();
 		inputMessages = new ArrayList<Message>();
@@ -49,9 +50,11 @@ public class Base implements Runnable{
 	}
 	
 	public void update(){
+		this.radius = 0.1f - ((100.0f-this.health)/100.0f)*0.06f;
+		System.out.println(this.radius);
 		Random rnd = new Random();
-		float speed=0.00001f;
-		angle += rnd.nextFloat()*0.0001;
+		float speed=0.001f;
+		angle += rnd.nextFloat()*0.01;
 		position.v[0] += Math.cos((double)angle)*speed;
 		position.v[1] += Math.sin((double)angle)*speed;
 	}
@@ -62,7 +65,7 @@ public class Base implements Runnable{
 		int updateCounter = 0;
 		while(alive){
 			worldSyncCounter++;
-			if(worldSyncCounter == 300){
+			if(worldSyncCounter == 10000){
 				synchronized(this){
 					outsideMessages.clear();
 					for(int i=0;i<inputMessages.size();i++){
@@ -73,7 +76,7 @@ public class Base implements Runnable{
 				worldSyncCounter=0;
 			}
 			updateCounter++;
-			if(updateCounter == 2000){
+			if(updateCounter == 300000){
 				updateCounter = 0;
 				update();
 			}
