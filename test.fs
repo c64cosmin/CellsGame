@@ -6,6 +6,7 @@ uniform sampler2D tex0;
 uniform float time;
 uniform vec2 points[100];
 uniform float radius[100];
+uniform vec4 colors[100];
 
 in vec2 uv;
 
@@ -74,7 +75,7 @@ vec4 tex(vec2 p){
 	            float c = 1.0-((1.0-v)*10.0);
 		    if(c>color){
 		        color=c;
-		        result = texture2D(tex0,u*0.5+0.5+d);
+		        result = texture2D(tex0,u*0.5+0.5+d)*colors[i];
 	            }
 		}
     }

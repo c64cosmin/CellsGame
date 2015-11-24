@@ -69,6 +69,8 @@ public class Main extends App{
 			if(i<cells.size()){
 				this.testShader.setUniformVec2(gl, "points[" + i + "]", cells.get(i).position);
 				this.testShader.setUniformFloat(gl, "radius[" + i + "]", cells.get(i).radius);
+				System.out.println(cells.size());
+				this.testShader.setUniformVec4(gl, "colors[" + i + "]",  cells.get(i).color);
 			}
 			else{
 				this.testShader.setUniformVec2(gl, "points[" + i + "]", new Vec2(-10,-10));

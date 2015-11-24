@@ -2,6 +2,7 @@ import java.util.ArrayList;
 import java.util.Random;
 
 import glm.Vec2;
+import glm.Vec4;
 import ogl.Shape;
 
 public class Base implements Runnable{
@@ -10,6 +11,7 @@ public class Base implements Runnable{
 	public float angle;
 	public boolean alive;
 	public float health;
+	public Vec4 color;
 	private boolean hasInputMessages;
 	private ArrayList<Message> outsideMessages;
 	private ArrayList<Message> inputMessages;
@@ -20,13 +22,14 @@ public class Base implements Runnable{
 		
 	}
 	
-	private Base(Vec2 p, float r, float a, float health){
+	private Base(Vec2 p, float r, float a, float health, Vec4 color){
 		position = p;
 		radius = r;
 		angle = a;
 		this.health = health;
 		this.health = (new Random()).nextFloat()*100.0f;
 		alive = true;
+		this.color = color;
 		outsideMessages = new ArrayList<Message>();
 		inputMessages = new ArrayList<Message>();
 		outputMessages = new ArrayList<Message>();
@@ -36,22 +39,22 @@ public class Base implements Runnable{
 		myClone.angle = this.angle;
 		myClone.health = this.health;
 		myClone.alive = this.alive;
+		myClone.color = this.color;
 	}
 	
 	public Base(Vec2 p, float r, float health){
-		this(p, r, (float)(new Random().nextFloat()*Math.PI*2.0), health);
+		this(p, r, (float)(new Random().nextFloat()*Math.PI*2.0), health, new Vec4(new Random().nextFloat(),new Random().nextFloat(),new Random().nextFloat(),1.0));
 	}	
 	
 	public Base clone(){
 		Base r;
-		r = new Base(this.position, this.radius, this.angle, this.health);
-		r.alive = this.alive;
+		r = new Base(position, radius, angle, health, new Vec4(color.v[0],color.v[1],color.v[2],color.v[3]));
+		r.alive = alive;
 		return r;
 	}
 	
 	public void update(){
 		this.radius = 0.1f - ((100.0f-this.health)/100.0f)*0.06f;
-		System.out.println(this.radius);
 		Random rnd = new Random();
 		float speed=0.001f;
 		angle += rnd.nextFloat()*0.01;
@@ -65,13 +68,16 @@ public class Base implements Runnable{
 		int updateCounter = 0;
 		while(alive){
 			worldSyncCounter++;
-			if(worldSyncCounter == 10000){
-				synchronized(this){
-					outsideMessages.clear();
-					for(int i=0;i<inputMessages.size();i++){
-						outsideMessages.add(inputMessages.get(i).clone());
+			if(worldSyncCounter == 5000){
+				if(hasInputMessages){
+					synchronized(this){
+						outsideMessages.clear();
+						for(int i=0;i<inputMessages.size();i++){
+							outsideMessages.add(inputMessages.get(i).clone());
+						}
+						myClone = this.clone();
 					}
-					myClone = this.clone();
+					hasInputMessages = false;
 				}
 				worldSyncCounter=0;
 			}
