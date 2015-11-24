@@ -22,6 +22,7 @@ public class Pool implements Runnable{
 	}
 	
 	public void run() {
+		int counter=0;
 		while(cells.size()!=0){
 			try {
 				Thread.sleep(1000/60);
@@ -46,34 +47,32 @@ public class Pool implements Runnable{
 					cells.get(i).inputMessage(messages);
 				}
 				
-				for(int i=0;i<cellClones.size();i++){
-					for(int j=0;j<cellClones.get(i).outputMessages.size();j++){
-						Message msg = cellClones.get(i).outputMessages.get(j);
-						if(msg.messageType == Message.type.EAT){
-							int closest = findClosest(msg.cell);
-							if(closest!=-1)
-							if(cellClones.get(i).alive&&
-							   cellClones.get(closest).alive&&
-							   cellClones.get(i).collide(cellClones.get(closest))){
-								cellClones.get(closest).alive=false;
-								cells.get(i).health+=cellClones.get(closest).health;
-							}
-						}
-						if(msg.messageType == Message.type.SPLIT){
-							if(cellClones.get(i).alive&&
-							   cellClones.get(i).health>80){
-								cellClones.get(i).alive=false;
-								addNewCell(new Cell(cellClones.get(i).position));
-								addNewCell(new Cell(cellClones.get(i).position));
-							}
+				for(int i=0;i<cellClones.size();i++)
+				if(cellClones.get(i).outputMessage!=null){
+					Message msg = cellClones.get(i).outputMessage;
+					if(msg.messageType == Message.type.EAT){
+						int closest = findClosest(msg.cell);
+						if(closest!=-1)
+						if(cellClones.get(i).alive&&
+						   cellClones.get(closest).alive&&
+						   cellClones.get(i).collide(cellClones.get(closest))){
+							cellClones.get(closest).alive=false;
+							cells.get(i).health+=cellClones.get(closest).health;
 						}
 					}
-					synchronized(cells.get(i)){
-						cellClones.get(i).outputMessages.clear();
+					if(msg.messageType == Message.type.SPLIT){
+						if(cellClones.get(i).alive&&
+						   cellClones.get(i).health>80){
+							cells.get(i).alive=false;
+							cellClones.get(i).alive=false;
+							addNewCell(new Cell(cellClones.get(i).position));
+							addNewCell(new Cell(cellClones.get(i).position));
+						}
 					}
 				}
-				
-				if(new Random().nextInt(120)==0){
+				counter++;
+				if(counter==100){//new Random().nextInt(120)==0){
+					counter=0;
 					addNewCell(new Food(new Vec2((new Random().nextFloat() * 2.0f - 1.0f) ,new Random().nextFloat() * 2.0f - 1.0f)));
 				}
 				

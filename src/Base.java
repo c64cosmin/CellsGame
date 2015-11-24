@@ -24,7 +24,7 @@ public class Base implements Runnable{
 	protected boolean hasInputMessages;
 	protected ArrayList<Message> outsideMessages;
 	protected ArrayList<Message> inputMessages;
-	protected ArrayList<Message> outputMessages;
+	protected Message outputMessage;
 	public Base myClone;
 	
 	protected Base(){
@@ -44,7 +44,6 @@ public class Base implements Runnable{
 		this.a = a;
 		outsideMessages = new ArrayList<Message>();
 		inputMessages = new ArrayList<Message>();
-		outputMessages = new ArrayList<Message>();
 		this.cellType = type;
 		initClone();
 	}
@@ -61,7 +60,6 @@ public class Base implements Runnable{
 		myClone.b = b;
 		myClone.a = a;
 		myClone.cellType = cellType;
-		myClone.outputMessages = new ArrayList<Message>();
 	}
 	
 	public Base(Vec2 p, float r, float health){
@@ -72,6 +70,7 @@ public class Base implements Runnable{
 		Base r;
 		r = new Base(position, cellType, radius, angle, health, this.r, this.g, this.b, this.a);
 		r.alive = alive;
+		r.outputMessage = this.outputMessage;
 		return r;
 	}
 	
@@ -97,15 +96,7 @@ public class Base implements Runnable{
 			if(counter%3 == 0){
 				counter=0;
 				synchronized(this){
-					ArrayList<Message> oldMessages = myClone.outputMessages;
 					myClone = this.clone();
-					for(int i=0;i<outputMessages.size();i++){
-						myClone.outputMessages.add(outputMessages.get(i).clone());
-					}
-					/*for(int i=0;i<oldMessages.size();i++){
-						myClone.outputMessages.add(oldMessages.get(i).clone());
-					}*/
-					outputMessages.clear();
 				}
 				if(hasInputMessages){
 					synchronized(this){

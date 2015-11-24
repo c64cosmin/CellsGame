@@ -21,7 +21,6 @@ public class Cell extends Base implements Runnable {
 		cellType = CellType.CELL;
 		outsideMessages = new ArrayList<Message>();
 		inputMessages = new ArrayList<Message>();
-		outputMessages = new ArrayList<Message>();
 		switchPath = 1.0;
 		initClone();
 	}
@@ -39,7 +38,7 @@ public class Cell extends Base implements Runnable {
 		}
 		if(health<0){
 			this.alive=false;
-			outputMessages.add(Message.Die());
+			outputMessage = Message.Die();
 		}
 		Random rnd = new Random();
 		health -= rnd.nextFloat()*0.01;
@@ -52,14 +51,14 @@ public class Cell extends Base implements Runnable {
 			if(Base.toAngle(this, target)<30)
 				angle -= rnd.nextFloat()*0.01;
 			if(health<100)
-				outputMessages.add(Message.Eat(target));
+				outputMessage = Message.Eat(target);
 		}
 		else{
 			if(rnd.nextInt(800)==0)switchPath = -switchPath;
 			angle += rnd.nextFloat()*0.01*switchPath;
 		}
 		if(health>80){
-			outputMessages.add(Message.Split());
+			outputMessage = Message.Split();
 		}
 		position.v[0] += Math.cos((double)angle)*speed;
 		position.v[1] += Math.sin((double)angle)*speed;

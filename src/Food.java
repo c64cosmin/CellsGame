@@ -19,7 +19,6 @@ public class Food extends Base implements Runnable {
 		cellType = CellType.FOOD;
 		outsideMessages = new ArrayList<Message>();
 		inputMessages = new ArrayList<Message>();
-		outputMessages = new ArrayList<Message>();
 		initClone();
 	}
 	
