@@ -23,7 +23,8 @@ public class Main extends App{
 	private Shader testShader;
 	private Shape screenQuad;
 	private float time=0; 
-	private int n = 100;
+	private int n = 10;
+	private int maxN = 100;
 	private Texture cellTexture;
 	private Shape renderDuty;
 	private Pool pool;
@@ -50,6 +51,7 @@ public class Main extends App{
 		this.screenQuad.add(new Vec2(-1.0f * ratio,  1.0f));
 		this.screenQuad.add(new Vec2( 1.0f * ratio,  1.0f));
 		pool = new Pool(n);
+		(new Thread(pool)).start();
 		Mouse.mouse.set(Mat4.identity(), Mat4.identity());
 		return 0;
 	}
@@ -62,7 +64,12 @@ public class Main extends App{
 		ArrayList<Base> cells = pool.getCells();
 		for(int i=0;i<cells.size();i++){
 			cells.get(i).draw(renderDuty);
-			this.testShader.setUniformVec2(gl, "points[" + i + "]", cells.get(i).position);
+		}
+		for(int i=0;i<maxN;i++){
+			if(i<cells.size())
+				this.testShader.setUniformVec2(gl, "points[" + i + "]", cells.get(i).position);
+			else
+				this.testShader.setUniformVec2(gl, "points[" + i + "]", new Vec2(-10,-10));
 		}
 		
 		this.testShader.setUniformFloat(gl, "time", time);

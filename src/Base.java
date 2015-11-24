@@ -16,13 +16,25 @@ public class Base implements Runnable{
 	private ArrayList<Message> outputMessages;
 	public Base myClone;
 	
+	private Base(){
+		
+	}
+	
 	private Base(Vec2 p, float r, float a, float health){
 		position = p;
 		radius = r;
 		angle = a;
 		this.health = health;
+		alive = true;
+		outsideMessages = new ArrayList<Message>();
 		inputMessages = new ArrayList<Message>();
 		outputMessages = new ArrayList<Message>();
+		myClone = new Base();
+		myClone.position = this.position;
+		myClone.radius = this.radius;
+		myClone.angle = this.angle;
+		myClone.health = this.health;
+		myClone.alive = this.alive;
 	}
 	
 	public Base(Vec2 p, float r, float health){
@@ -38,8 +50,8 @@ public class Base implements Runnable{
 	
 	public void update(){
 		Random rnd = new Random();
-		float speed=0.001f;
-		angle += rnd.nextFloat()*0.01;
+		float speed=0.00001f;
+		angle += rnd.nextFloat()*0.0001;
 		position.v[0] += Math.cos((double)angle)*speed;
 		position.v[1] += Math.sin((double)angle)*speed;
 	}
@@ -47,9 +59,10 @@ public class Base implements Runnable{
 	public void run() {
 		ArrayList<Message> inputMessagesList;
 		int worldSyncCounter = 0;
+		int updateCounter = 0;
 		while(alive){
 			worldSyncCounter++;
-			if(worldSyncCounter == 100){
+			if(worldSyncCounter == 300){
 				synchronized(this){
 					outsideMessages.clear();
 					for(int i=0;i<inputMessages.size();i++){
@@ -59,7 +72,11 @@ public class Base implements Runnable{
 				}
 				worldSyncCounter=0;
 			}
-			update();
+			updateCounter++;
+			if(updateCounter == 2000){
+				updateCounter = 0;
+				update();
+			}
 		}
 	}
 	
