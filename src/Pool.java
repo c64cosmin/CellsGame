@@ -8,19 +8,27 @@ public class Pool implements Runnable{
 	private static Pool instance = null;
 	public synchronized static Pool get(){
 		if(Pool.instance == null){
-			Pool.instance = new Pool(10);
+			Pool.instance = new Pool();
 			(new Thread(Pool.instance)).start();
 		}
 		return Pool.instance;
 	}
-	private Pool(int amount){
+	private Pool(){
 		cells = new ArrayList<Base>();
 		Random random = new Random();
 		for(int i=0;i<10;i++){
 			addNewCell(new Food(new Vec2((random.nextFloat() * 2.0f - 1.0f) ,random.nextFloat() * 2.0f - 1.0f)));
 		}
 		for(int i=0;i<10;i++){
-			addNewCell(new Cell(new Vec2((random.nextFloat() * 2.0f - 1.0f) ,random.nextFloat() * 2.0f - 1.0f)));
+			//addNewCell(new Cell(new Vec2((random.nextFloat() * 2.0f - 1.0f) ,random.nextFloat() * 2.0f - 1.0f)));
+		}
+		for(int i=0;i<10;i++){
+			if(random.nextBoolean()){
+				addNewCell(new Male(new Vec2((random.nextFloat() * 2.0f - 1.0f) ,random.nextFloat() * 2.0f - 1.0f)));
+			}
+			else{
+				addNewCell(new Female(new Vec2((random.nextFloat() * 2.0f - 1.0f) ,random.nextFloat() * 2.0f - 1.0f)));
+			}
 		}
 	}
 	
@@ -32,7 +40,7 @@ public class Pool implements Runnable{
 				e.printStackTrace();
 			}
 			Random random = new Random();
-			if(random.nextInt(70)==0)addNewCell(new Food(new Vec2((random.nextFloat() * 2.0f - 1.0f) ,random.nextFloat() * 2.0f - 1.0f)));
+			if(random.nextInt(60)==0)addNewCell(new Food(new Vec2((random.nextFloat() * 2.0f - 1.0f) ,random.nextFloat() * 2.0f - 1.0f)));
 			synchronized(this.cells){
 				for(int i=0;i<cells.size();i++){
 					if(!cells.get(i).isAlive()){

@@ -21,11 +21,9 @@ public class Main extends App{
 	private Shader testShader;
 	private Shape screenQuad;
 	private float time=0; 
-	private int n = 100;
 	public static int maxN = 100;
 	private Texture cellTexture;
 	private Shape renderDuty;
-	private Pool pool;
 	public static void main(String[] args){
 		new OpenGL("Cell game",(App)new Main());
 	}
@@ -75,7 +73,7 @@ public class Main extends App{
 		
 		this.testShader.setUniformFloat(gl, "time", time);
 		gl.glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
-		gl.glClear(gl.GL_COLOR_BUFFER_BIT);
+		gl.glClear(GL4.GL_COLOR_BUFFER_BIT);
 		renderDuty.draw(gl, testShader, DrawMode.triangles);
 	}
 

@@ -3,22 +3,22 @@ import java.util.Random;
 
 import glm.Vec2;
 
-public class Cell extends Base implements Runnable {
+public class Male extends Base implements Runnable {
 	
 	private double switchPath;
 
-	public Cell(Vec2 p) {
+	public Male(Vec2 p) {
 		Random rnd = new Random();
 		position = new Vec2(p.v[0], p.v[1]);
 		this.angle = (float) (rnd.nextFloat()*Math.PI*2.0);
 		this.health = 60;
 		alive = true;
-		this.r = 1.0;
-		this.g = 1.0;
+		this.r = 0.7;
+		this.g = 0.7;
 		this.b = 1.0;
 		this.a = 1.0;
 		this.radius=0.0f;
-		cellType = CellType.CELL;
+		cellType = CellType.MALE;
 		switchPath = 1.0;
 		this.speed = 0.001 + rnd.nextDouble()*0.0005;
 	}
@@ -39,6 +39,13 @@ public class Cell extends Base implements Runnable {
 					target = cells.get(i);
 					minDistance = distance;
 				}
+				if(health > 40)
+				if(distance>0.001 && distance<minDistance)
+				if(cells.get(i).isAlive())
+				if(cells.get(i).getType() == Base.CellType.FEMALE){
+					target = cells.get(i);
+					minDistance = distance;
+				}
 			}
 			Random rnd = new Random();
 			health -= rnd.nextFloat()*0.01;
@@ -52,14 +59,13 @@ public class Cell extends Base implements Runnable {
 				if(target.getType() == Base.CellType.FOOD){
 					((Food) target).canEat(this);
 				}
+				if(target.getType() == Base.CellType.FEMALE){
+					((Female) target).canMate(this);
+				}
 			}
 			else{
 				if(rnd.nextInt(800)==0)switchPath = -switchPath;
 				angle += rnd.nextFloat()*0.01*switchPath;
-			}
-			if(health>80){
-				Pool.get().addNewCell(new Cell(new Vec2(this.position.v[0], this.position.v[1])));
-				this.health-=25;
 			}
 			if(this.health<=0.0){
 				Pool.get().addNewCell(new Food(new Vec2(this.position.v[0], this.position.v[1])));
@@ -68,5 +74,9 @@ public class Cell extends Base implements Runnable {
 			position.v[0] += Math.cos((double)angle)*speed;
 			position.v[1] += Math.sin((double)angle)*speed;
 		}
+	}
+
+	public void mated() {
+		this.health -= 20;
 	}
 }

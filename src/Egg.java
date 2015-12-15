@@ -2,21 +2,23 @@ import java.util.Random;
 
 import glm.Vec2;
 
-public class Food extends Base implements Runnable {
+public class Egg extends Base implements Runnable {
 	protected static double yum = 15;
+	private double hatch;
 
-	public Food(Vec2 p) {
+	public Egg(Vec2 p) {
 		Random rnd = new Random();
 		position = new Vec2(p.v[0], p.v[1]);
 		this.angle = (float) (rnd.nextFloat()*Math.PI*2.0);
-		this.health = rnd.nextFloat()*15+15;
+		this.health = 15;
 		alive = true;
-		this.r = 0.3;
-		this.g = 1.0;
-		this.b = 0.3;
+		this.r = 1.0;
+		this.g = 0.2;
+		this.b = 0.2;
 		this.a = 1.0;
 		this.radius=0.0f;
-		cellType = CellType.FOOD;
+		cellType = CellType.CELL;
+		this.hatch = 1;
 		this.speed = 0.001;
 	}
 	
@@ -26,15 +28,16 @@ public class Food extends Base implements Runnable {
 		this.radius += (radiusTarget-radius)*0.01;
 		position.v[0] += rnd.nextDouble()*speed-speed/2;
 		position.v[1] += rnd.nextDouble()*speed-speed/2;
-	}
-	
-	public synchronized boolean canEat(Base eater){
-		if(this.alive)
-		if(this.collide(eater)){
+		this.hatch -= 0.001;
+		this.a = 0.2 + (1.0-hatch)* 0.8;
+		if(this.hatch<=0.0){
 			this.alive=false;
-			eater.giveHealth(Food.yum);
-			return true;
+			if(rnd.nextInt(100)>40){
+				Pool.get().addNewCell(new Male(new Vec2(this.position.v[0], this.position.v[1])));
+			}
+			else{
+				Pool.get().addNewCell(new Female(new Vec2(this.position.v[0], this.position.v[1])));
+			}
 		}
-		return false;
 	}
 }

@@ -1,4 +1,3 @@
-import java.util.ArrayList;
 import java.util.Random;
 
 import glm.Vec2;
@@ -21,6 +20,7 @@ public class Base implements Runnable{
 	public double g;
 	public double b;
 	public double a;
+	public double speed;
 	
 	protected Base(){
 		
@@ -87,14 +87,14 @@ public class Base implements Runnable{
 		return Math.sqrt(Math.pow(base1.position.v[0]-base2.position.v[0], 2) + Math.pow(base1.position.v[1]-base2.position.v[1], 2));
 	}
 
-	public static float angle(Cell cell, Base target){
+	public static float angle(Base cell, Base target){
 	   float angle = (float) Math.toDegrees(Math.atan2(target.position.v[1] - cell.position.v[1], target.position.v[0] - cell.position.v[0]));
 	    if(angle < 0){
 	        angle += 360;
 	    }
 	    return angle;
 	}
-	public static float toAngle(Cell cell, Base target) {
+	public static float toAngle(Base cell, Base target) {
 		float angle = angle(cell,target);
 		int d = (int) (Math.abs(angle - cell.angle*180/Math.PI) % 360);
 		int r = d > 180 ? 360 - d : d;

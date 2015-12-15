@@ -3,23 +3,25 @@ import java.util.Random;
 
 import glm.Vec2;
 
-public class Cell extends Base implements Runnable {
+public class Female extends Base implements Runnable {
 	
 	private double switchPath;
+	private Male mate;
 
-	public Cell(Vec2 p) {
+	public Female(Vec2 p) {
 		Random rnd = new Random();
 		position = new Vec2(p.v[0], p.v[1]);
 		this.angle = (float) (rnd.nextFloat()*Math.PI*2.0);
 		this.health = 60;
 		alive = true;
 		this.r = 1.0;
-		this.g = 1.0;
-		this.b = 1.0;
+		this.g = 0.7;
+		this.b = 0.7;
 		this.a = 1.0;
 		this.radius=0.0f;
-		cellType = CellType.CELL;
+		cellType = CellType.FEMALE;
 		switchPath = 1.0;
+		mate = null;
 		this.speed = 0.001 + rnd.nextDouble()*0.0005;
 	}
 	
@@ -39,6 +41,13 @@ public class Cell extends Base implements Runnable {
 					target = cells.get(i);
 					minDistance = distance;
 				}
+				if(health > 40)
+				if(distance>0.001 && distance<minDistance)
+				if(cells.get(i).isAlive())
+				if(cells.get(i).getType() == Base.CellType.MALE){
+					target = cells.get(i);
+					minDistance = distance;
+				}
 			}
 			Random rnd = new Random();
 			health -= rnd.nextFloat()*0.01;
@@ -46,9 +55,9 @@ public class Cell extends Base implements Runnable {
 			this.radius += (radiusTarget-radius)*0.01;
 			if(target!=null){
 				if(Base.toAngle(this, target)>30)
-					angle += rnd.nextFloat()*0.03;
+					angle += rnd.nextFloat()*0.08;
 				if(Base.toAngle(this, target)<30)
-					angle -= rnd.nextFloat()*0.03;
+					angle -= rnd.nextFloat()*0.08;
 				if(target.getType() == Base.CellType.FOOD){
 					((Food) target).canEat(this);
 				}
@@ -57,16 +66,32 @@ public class Cell extends Base implements Runnable {
 				if(rnd.nextInt(800)==0)switchPath = -switchPath;
 				angle += rnd.nextFloat()*0.01*switchPath;
 			}
-			if(health>80){
-				Pool.get().addNewCell(new Cell(new Vec2(this.position.v[0], this.position.v[1])));
-				this.health-=25;
-			}
 			if(this.health<=0.0){
 				Pool.get().addNewCell(new Food(new Vec2(this.position.v[0], this.position.v[1])));
 				this.alive=false;
 			}
+			if(health > 120){
+				health -= 60;
+				Pool.get().addNewCell(new Egg(new Vec2(this.position.v[0], this.position.v[1])));
+			}
+			if(this.mate != null){
+				this.health -= 20;
+				mate.mated();
+				Pool.get().addNewCell(new Egg(new Vec2(this.position.v[0], this.position.v[1])));
+				this.mate = null;
+			}
 			position.v[0] += Math.cos((double)angle)*speed;
 			position.v[1] += Math.sin((double)angle)*speed;
 		}
+	}
+
+	public synchronized boolean canMate(Male male) {
+		if(this.mate == null)
+		if(this.alive)
+		if(this.health>40){
+			mate = male;
+			return true;
+		}
+		return false;
 	}
 }
