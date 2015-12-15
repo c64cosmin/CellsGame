@@ -4,6 +4,7 @@ import java.util.Random;
 import glm.Vec2;
 
 public class Food extends Base implements Runnable {
+	protected static double yum = 15;
 
 	public Food(Vec2 p) {
 		Random rnd = new Random();
@@ -17,9 +18,6 @@ public class Food extends Base implements Runnable {
 		this.a = 1.0;
 		this.radius=0.0f;
 		cellType = CellType.FOOD;
-		outsideMessages = new ArrayList<Message>();
-		inputMessages = new ArrayList<Message>();
-		initClone();
 	}
 	
 	public void update(){
@@ -29,5 +27,15 @@ public class Food extends Base implements Runnable {
 		double speed = 0.001;
 		position.v[0] += rnd.nextDouble()*speed-speed/2;
 		position.v[1] += rnd.nextDouble()*speed-speed/2;
+	}
+	
+	public synchronized boolean canEat(Base eater){
+		if(this.alive)
+		if(this.collide(eater)){
+			this.alive=false;
+			eater.giveHealth(this.yum);
+			return true;
+		}
+		return false;
 	}
 }

@@ -21,11 +21,6 @@ public class Base implements Runnable{
 	public double g;
 	public double b;
 	public double a;
-	protected boolean hasInputMessages;
-	protected ArrayList<Message> outsideMessages;
-	protected ArrayList<Message> inputMessages;
-	protected Message outputMessage;
-	public Base myClone;
 	
 	protected Base(){
 		
@@ -42,24 +37,7 @@ public class Base implements Runnable{
 		this.g = g;
 		this.b = b;
 		this.a = a;
-		outsideMessages = new ArrayList<Message>();
-		inputMessages = new ArrayList<Message>();
 		this.cellType = type;
-		initClone();
-	}
-	
-	protected void initClone(){
-		myClone = new Base();
-		myClone.position = new Vec2(position.v[0], position.v[1]);
-		myClone.radius = this.radius;
-		myClone.angle = this.angle;
-		myClone.health = this.health;
-		myClone.alive = this.alive;
-		myClone.r = r;
-		myClone.g = g;
-		myClone.b = b;
-		myClone.a = a;
-		myClone.cellType = cellType;
 	}
 	
 	public Base(Vec2 p, float r, float health){
@@ -70,7 +48,6 @@ public class Base implements Runnable{
 		Base r;
 		r = new Base(position, cellType, radius, angle, health, this.r, this.g, this.b, this.a);
 		r.alive = alive;
-		r.outputMessage = this.outputMessage;
 		return r;
 	}
 	
@@ -84,7 +61,6 @@ public class Base implements Runnable{
 	}
 	
 	public void run() {
-		int counter = 0;
 		while(alive){
 			try {
 				Thread.sleep(1);
@@ -92,26 +68,7 @@ public class Base implements Runnable{
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			counter++;
-			if(counter%3 == 0){
-				counter=0;
-				synchronized(this){
-					myClone = this.clone();
-				}
-				if(hasInputMessages){
-					synchronized(this){
-						outsideMessages.clear();
-						for(int i=0;i<inputMessages.size();i++){
-							outsideMessages.add(inputMessages.get(i).clone());
-						}
-					}
-					hasInputMessages = false;
-				}
-			}
 			update();
-		}
-		synchronized(this){
-			myClone = this.clone();
 		}
 	}
 	
@@ -124,20 +81,6 @@ public class Base implements Runnable{
 		shape.add(position.add(new Vec2(-s, s)));
 		shape.add(position.add(new Vec2( s,-s)));
 		shape.add(position.add(new Vec2( s, s)));
-	}
-	
-	public void inputMessage(ArrayList<Message> msg){
-		synchronized(this){
-			inputMessages.clear();
-			for(int i=0;i<msg.size();i++){
-				inputMessages.add(msg.get(i).clone());
-			}
-			hasInputMessages = true;
-		}
-	}
-
-	public synchronized Base getClone() {
-		return myClone;
 	}
 	
 	public static double distance(Base base1, Base base2) {
@@ -162,5 +105,17 @@ public class Base implements Runnable{
 		if(radius+base.radius>=Base.distance(this, base))
 			return true;
 		return false;
+	}
+	
+	public synchronized CellType getType(){
+		return this.cellType;
+	}
+
+	public boolean isAlive() {
+		return this.alive;
+	}
+
+	public synchronized void giveHealth(double yum) {
+		this.health += yum;
 	}
 }

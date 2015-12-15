@@ -48,8 +48,7 @@ public class Main extends App{
 		this.screenQuad.add(new Vec2( 1.0f * ratio, -1.0f));
 		this.screenQuad.add(new Vec2(-1.0f * ratio,  1.0f));
 		this.screenQuad.add(new Vec2( 1.0f * ratio,  1.0f));
-		pool = new Pool(n);
-		(new Thread(pool)).start();
+		Pool.get();
 		Mouse.mouse.set(Mat4.identity(), Mat4.identity());
 		return 0;
 	}
@@ -59,7 +58,7 @@ public class Main extends App{
 
 	public void draw(GL4 gl) {
 		renderDuty.begin();
-		ArrayList<Base> cells = pool.getCells();
+		ArrayList<Base> cells = Pool.get().getCells();
 		for(int i=0;i<cells.size();i++){
 			cells.get(i).draw(renderDuty);
 		}
@@ -80,8 +79,7 @@ public class Main extends App{
 		renderDuty.draw(gl, testShader, DrawMode.triangles);
 	}
 
-	public int update(GL4 gl) {
-		
+	public int update(GL4 gl) {	
 		return 0;
 	}
 }
